@@ -2,8 +2,9 @@
 #define BACKEND_H
 
 /*
-fc-top backend.h
+* fc-top backend.h
 */
+
 struct Memory{
     unsigned long MemTotal; // Total usable ram
     unsigned long MemUsed; // Total memory used
