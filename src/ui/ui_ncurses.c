@@ -25,7 +25,6 @@ void render_ui(const struct Memory *memory){
 
 void draw_bar(double percentage, int bar_width){
     int filled_width = (int) ((percentage / 100.0) * bar_width);
-    // Draw memory bar
     printw("[");
     for (int i = 0; i < bar_width; i++) {
         if (i < filled_width) {
