@@ -17,23 +17,24 @@ void init_ui(){
 void render_ui(const struct Memory *memory){
     erase();
     printw("fc-top v%s\n\nMemory\n", FCTOP_VERSION);
-    
-    int bar_width = 50;
-    int filled_width = (int)((memory->UsagePercentage / 100.0) * bar_width);
-    
+    draw_bar(memory->UsagePercentage, 50);
+    printw("%.2f GiB (%.1f\%) of %.2f GiB\n", memory->UsedGiB, memory->UsagePercentage, memory->TotalGiB);
+    refresh();
+    return;
+}
+
+void draw_bar(double percentage, int bar_width){
+    int filled_width = (int) ((percentage / 100.0) * bar_width);
     // Draw memory bar
     printw("[");
     for (int i = 0; i < bar_width; i++) {
         if (i < filled_width) {
-            printw("#%");
+            printw("*%");
         } else {
             printw("-");
         }
     }
-    printw("]\n%.2f GiB (%.1f\%) of %.2f GiB\n", memory->UsedGiB, memory->UsagePercentage, memory->TotalGiB);
-
-    refresh();
-    return;
+    printw("]\n");
 }
 
 void end_ui(){
