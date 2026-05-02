@@ -1,4 +1,4 @@
-#include "../../include/backend.h"
+#include "backend.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -26,6 +26,8 @@ void get_memory(struct Memory *memory){
     unsigned long MemUsed = 0;
     unsigned long MemAvailable = 0;
     double UsagePercentage = 0;
+    double TotalGiB = 0;
+    double UsedGiB = 0;
 
     while (fgets(line, sizeof(line), fptr))
     {
@@ -39,11 +41,15 @@ void get_memory(struct Memory *memory){
 
     MemUsed = (MemTotal - MemAvailable);
     UsagePercentage = ((double) MemUsed * 100) / (double) MemTotal;
+    TotalGiB = (double) MemTotal / 1048576.0;
+    UsedGiB = (double) MemUsed /  1048576.0;
 
     memory->MemTotal = MemTotal;
     memory->MemAvailable = MemAvailable;
     memory->UsagePercentage = UsagePercentage;
     memory->MemUsed = MemUsed;
+    memory->TotalGiB = TotalGiB;
+    memory->UsedGiB = UsedGiB;
     
     fclose(fptr);
     return;
