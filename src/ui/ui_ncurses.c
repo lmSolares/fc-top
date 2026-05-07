@@ -1,8 +1,9 @@
 #include <ncurses.h>
 #include "model.h"
+#include "backend.h"
 
 /*
-* fc-top
+* fc-top ui_ncurses
 */
 
 void init_ui(){
@@ -14,16 +15,12 @@ void init_ui(){
     return;
 }
 
-void render_ui(const struct Memory *memory){
-    erase();
-    printw("fc-top v%s\n\nMemory\n", FCTOP_VERSION);
-    draw_bar(memory->UsagePercentage, 50);
-    printw("%.2f GiB (%.1f\%) of %.2f GiB\n", memory->UsedGiB, memory->UsagePercentage, memory->TotalGiB);
-    refresh();
-    return;
+void render_memory(const struct Memory *memory){
+    render_bar(memory->UsagePercentage, 50);
+    printw("Memory\n%.2f GiB (%.1f\%) of %.2f GiB\n", memory->UsedGiB, memory->UsagePercentage, memory->TotalGiB);
 }
 
-void draw_bar(double percentage, int bar_width){
+void render_bar(double percentage, int bar_width){
     int filled_width = (int) ((percentage / 100.0) * bar_width);
     printw("[");
     for (int i = 0; i < bar_width; i++) {
