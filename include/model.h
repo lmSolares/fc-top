@@ -3,12 +3,28 @@
 #include "backend.h"
 
 /*
-- fc-top tui.h
+- fc-top model.h
 */
 
+// Start/end ncurses
+
+/**
+ * @brief Function that initializes ncurses.
+ * 
+ * @return void
+ */
 void init_ui();
-void render_ui(const struct Memory *memory);
+
+/**
+ * @brief Function that terminates ncurses.
+ * 
+ * @return void
+ */
 void end_ui();
-void draw_bar(double percentage, int bar_width);
+
+// Renders
+void render_memory(const struct Memory *memory);
+void render_bar(double percentage, int bar_width);
+void render_uptime();
 
 #endif
