@@ -20,6 +20,10 @@ void render_memory(const struct Memory *memory){
     printw("Memory\n%.2f GiB (%.1f\%) of %.2f GiB\n", memory->UsedGiB, memory->UsagePercentage, memory->TotalGiB);
 }
 
+void render_uptime(const struct Uptime *uptime){
+    printw("Uptime: %d d %d h %d m %lis\n",uptime->days,uptime->hours, uptime->minutes, uptime->seconds);
+}
+
 void render_bar(double percentage, int bar_width){
     int filled_width = (int) ((percentage / 100.0) * bar_width);
     printw("[");
