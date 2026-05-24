@@ -13,6 +13,8 @@ int main(){
         erase();
         get_memory(&memory);
         render_memory(&memory);
+        get_uptime(&uptime);
+        render_uptime(&uptime);
         int in = getch();
         if(in == 'q'){
             break;
