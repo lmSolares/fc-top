@@ -6,7 +6,6 @@
 - fc-top model.h
 */
 
-// Start/end ncurses
 
 /**
  * @brief Function that initializes ncurses.
@@ -24,7 +23,7 @@ void end_ui();
 
 // Renders
 void render_memory(const struct Memory *memory);
+void render_uptime(const struct Uptime *uptime);
 void render_bar(double percentage, int bar_width);
-void render_uptime();
 
 #endif
