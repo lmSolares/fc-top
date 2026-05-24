@@ -1,7 +1,7 @@
 #ifndef BACKEND_H
 #define BACKEND_H
 
-#define FCTOP_VERSION "0.1.0"
+#define FCTOP_VERSION "0.2.0"
 
 /*
 * fc-top backend.h
@@ -23,16 +23,10 @@ struct Memory{
 };
 
 /**
-* @brief Function that reads /proc/meminfo to obtain the current state of memory.
-* 
-* @param memory Memory structure in which the data will be stored.
-* 
-* @return void
-*/
-void get_memory(struct Memory *memory);
-
-/**
- * 
+ * @struct Uptime
+ * @brief Represents the total time since the last system startup.
+ * This structure contains the information necessary to represent system time in days, hours, minutes, and seconds.
+ *
  */
 struct Uptime{
     long seconds;
@@ -40,5 +34,22 @@ struct Uptime{
     int hours;
     int days;
 };
+
+/**
+ * @brief Function that reads /proc/meminfo to obtain the current state of memory.
+ *
+ * @param memory Memory structure in which the data will be stored.
+ *
+ * @return void
+ */
+void get_memory(struct Memory *memory);
+
+/**
+ * @brief Function that reads /proc/uptime to obtain the current system time status.}
+ * @param uptime Uptime structure in which the data will be stored.
+ *
+ * @return void
+ */
+void get_uptime(struct Uptime *uptime);
 
 #endif
