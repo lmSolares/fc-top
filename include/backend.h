@@ -1,7 +1,7 @@
 #ifndef BACKEND_H
 #define BACKEND_H
 
-#define FCTOP_VERSION "0.2.0"
+#define FCTOP_VERSION "0.3.0"
 
 /*
 * fc-top backend.h
@@ -23,6 +23,26 @@ struct Memory{
 };
 
 /**
+ * @struct Swap
+ */
+struct Swap{
+    unsigned long SwapTotal;
+    unsigned long SwapFree;
+    double UsedSwap;
+    double TotalGiB;
+    double UsedGiB;
+    double UsagePercentage;
+};
+
+/**
+ * @struct Hardware
+ * @brief
+ */
+struct Hardware{
+};
+
+
+/**
  * @struct Uptime
  * @brief Represents the total time since the last system startup.
  * This structure contains the information necessary to represent system time in days, hours, minutes, and seconds.
@@ -39,10 +59,11 @@ struct Uptime{
  * @brief Function that reads /proc/meminfo to obtain the current state of memory.
  *
  * @param memory Memory structure in which the data will be stored.
+ * @param swap Swap structure in which the data will be stored.
  *
  * @return void
  */
-void get_memory(struct Memory *memory);
+void get_memory(struct Memory *memory, struct Swap *swap);
 
 /**
  * @brief Function that reads /proc/uptime to obtain the current system time status.}
