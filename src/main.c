@@ -5,21 +5,23 @@
 int main(){
 
     struct Memory memory;
+    struct Swap swap;
     struct Uptime uptime;
 
     init_ui();
 
     while(1){
-        erase();
-        get_memory(&memory);
-        render_memory(&memory);
+
+        // Get data
+        get_memory(&memory, &swap);
         get_uptime(&uptime);
-        render_uptime(&uptime);
+
+        render_dashboard(&memory, &uptime, &swap);
+
         int in = getch();
         if(in == 'q'){
             break;
         }
-        refresh();
     }
 
     end_ui();
