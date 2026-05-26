@@ -1,6 +1,7 @@
 #ifndef MODEL_H
 #define MODEL_H
 #include "backend.h"
+#include <ncurses.h>
 
 /*
 - fc-top model.h
@@ -22,8 +23,10 @@ void init_ui();
 void end_ui();
 
 // Renders
-void render_memory(const struct Memory *memory);
-void render_uptime(const struct Uptime *uptime);
-void render_bar(double percentage, int bar_width);
+void render_dashboard(const struct Memory *memory, const struct Uptime *uptime, const struct Swap *swap);
+void render_memory(WINDOW *win, const struct Memory *memory);
+void render_uptime(WINDOW *win, const struct Uptime *uptime);
+void render_swap(WINDOW *win, const struct Swap *swap);
+void render_bar(WINDOW *win, double percentage, int bar_width, int y, int x);
 
 #endif
