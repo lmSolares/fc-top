@@ -1,7 +1,7 @@
 #ifndef BACKEND_H
 #define BACKEND_H
 
-#define FCTOP_VERSION "0.3.0"
+#define FCTOP_VERSION "0.4.0"
 
 /*
 * fc-top backend.h
@@ -56,6 +56,25 @@ struct Uptime{
 };
 
 /**
+ * @struct Process
+ */
+struct Process{
+    int pid; /**/
+    char name[256];
+    char state;
+    unsigned long rss;
+};
+
+/**
+ *  @struct ProcessList
+ */
+struct ProcessList{
+    struct Process *processes;
+    int count;
+    int capacity;
+};
+
+/**
  * @brief Function that reads /proc/meminfo to obtain the current state of memory.
  *
  * @param memory Memory structure in which the data will be stored.
@@ -72,5 +91,15 @@ void get_memory(struct Memory *memory, struct Swap *swap);
  * @return void
  */
 void get_uptime(struct Uptime *uptime);
+
+/**
+ *
+ */
+void get_processes(struct ProcessList *plist);
+
+/**
+ *
+ */
+void free_processes(struct ProcessList *plist);
 
 #endif
