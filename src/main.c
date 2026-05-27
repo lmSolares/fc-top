@@ -33,29 +33,44 @@ int main(){
 
         // Quit
         int in = getch();
-        if(in == 'q'){
-            break;
-        }
+        int quit = 0;
 
-        // UP/DOWN & Kill
-        else if (in == KEY_UP) {
-            if (selected_process > 0) {
-                selected_process--;
-            }
-        }
-        else if (in == KEY_DOWN) {
-            if (selected_process < process_list.count - 1) {
-                selected_process++;
-            }
-        }
-        else if (in == 'k' || in == 'K') {
-            if (process_list.count > 0 && selected_process < process_list.count) {
-                struct Process *p = &process_list.processes[selected_process];
-
-                if (confirm_kill(p->pid, p->name)) {
-                    kill(p->pid, SIGTERM);
+        if (in != ERR) {
+            do {
+                if (in == 'q') {
+                    quit = 1;
+                    break;
                 }
-            }
+                else if (in == KEY_UP) {
+                    if (selected_process > 0) {
+                        selected_process--;
+                    }
+                }
+                else if (in == KEY_DOWN) {
+                    if (selected_process < process_list.count - 1) {
+                        selected_process++;
+                    }
+                }
+                else if (in == 'k' || in == 'K') {
+                    if (process_list.count > 0 && selected_process < process_list.count) {
+                        struct Process *p = &process_list.processes[selected_process];
+
+                        if (confirm_kill(p->pid, p->name)) {
+                            kill(p->pid, SIGTERM);
+                        }
+                    }
+                }
+
+                nodelay(stdscr, TRUE);
+                in = getch();
+
+            } while (in != ERR);
+
+            timeout(100);
+        }
+
+        if (quit) {
+            break;
         }
 
     }
