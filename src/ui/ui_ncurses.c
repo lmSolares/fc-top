@@ -70,8 +70,79 @@ void render_uptime(WINDOW *win, const struct Uptime *uptime){
     mvwprintw(win, 3, 2, "Uptime: %d d %d h %d m %lis", uptime->days, uptime->hours, uptime->minutes, uptime->seconds);
 }
 
-void render_dashboard(const struct Memory *memory, const struct Uptime *uptime, const struct Swap *swap) {
-    werase(stdscr); // Borramos el lienzo base (que ahora aloja a todos)
+void render_processes(WINDOW *win, const struct ProcessList *plist, int selected, int *scroll) {
+    int max_y, max_x;
+    getmaxyx(win, max_y, max_x);
+
+    mvwprintw(win, 1, 2, "PROCESSES");
+    mvwprintw(win, 2, 2, "%-8s %-6s %-12s %s", "PID", "STATE", "RAM (MiB)", "NAME");
+
+    int max_rows = max_y - 5;
+
+    if (selected < *scroll) {
+        *scroll = selected;
+    }
+
+    else if (selected >= *scroll + max_rows) {
+        *scroll = selected - max_rows + 1;
+    }
+
+
+    for (int i = 0; i < max_rows && (*scroll + i) < plist->count; i++) {
+        int idx = *scroll + i;
+        struct Process *p = &plist->processes[idx];
+
+        double ram_mib = (double)p->rss / 1048576.0;
+
+        if (idx == selected) {
+            wattron(win, A_REVERSE);
+        }
+
+        mvwprintw(win, 3 + i, 2, "%-8d %-6c %-12.2f %-20s", p->pid, p->state, ram_mib, p->name);
+
+        if (idx == selected) {
+            wattroff(win, A_REVERSE);
+        }
+    }
+}
+
+int confirm_kill(int pid, const char *name) {
+    int h = 5;
+    int w = 45;
+    int y = (LINES - h) / 2;
+    int x = (COLS - w) / 2;
+
+    WINDOW *win_confirm = newwin(h, w, y, x);
+    draw_rounded_box(win_confirm);
+
+    mvwprintw(win_confirm, 1, (w - 14) / 2, " CONFIRM KILL ");
+    mvwprintw(win_confirm, 2, 2, "Kill PID %d (%.15s)?", pid, name);
+    mvwprintw(win_confirm, 3, 2, "[y] Yes   [n/ESC] No");
+
+    wrefresh(win_confirm);
+
+    timeout(-1);
+    int ch;
+    int result = 0;
+
+    while ((ch = getch())) {
+        if (ch == 'y' || ch == 'Y') {
+            result = 1;
+            break;
+        } else if (ch == 'n' || ch == 'N' || ch == 27) {
+            result = 0;
+            break;
+        }
+    }
+
+    timeout(100);
+    delwin(win_confirm);
+
+    return result;
+}
+
+void render_dashboard(const struct Memory *memory, const struct Uptime *uptime, const struct Swap *swap, const struct ProcessList *plist, int selected, int *scroll) {
+    werase(stdscr);
 
     int main_h = LINES;
     int main_w = COLS;
@@ -114,11 +185,12 @@ void render_dashboard(const struct Memory *memory, const struct Uptime *uptime, 
     int bot_h = main_h - sub_h - 3;
     WINDOW *win_proc = subwin(stdscr, bot_h, main_w - 4, 1 + sub_h, 2);
     draw_rounded_box(win_proc);
-    mvwprintw(win_proc, 1, 2, "PROCESSES");
-    mvwprintw(win_proc, bot_h - 2, 2, "Press 'q' to quit");
+
+    render_processes(win_proc, plist, selected, scroll);
+
+    mvwprintw(win_proc, bot_h - 2, 2, "UP/DOWN: Navigate | 'k': Kill | 'q': Quit");
 
     touchwin(stdscr);
-
     wnoutrefresh(stdscr);
     doupdate();
 
