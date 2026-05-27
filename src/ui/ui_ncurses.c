@@ -65,9 +65,28 @@ void render_swap(WINDOW *win, const struct Swap *swap){
     mvwprintw(win, 7, 2, "%.2f GiB (%.1f%%) of %.2f GiB", swap->UsedGiB, swap->UsagePercentage, swap->TotalGiB);
 }
 
-void render_uptime(WINDOW *win, const struct Uptime *uptime){
-    mvwprintw(win, 1, 2, "System Info");
-    mvwprintw(win, 3, 2, "Uptime: %d d %d h %d m %lis", uptime->days, uptime->hours, uptime->minutes, uptime->seconds);
+void render_system_info(WINDOW *win, const struct SystemInfo *sys_info) {
+    int max_y, max_x;
+    getmaxyx(win, max_y, max_x);
+    for (int i = 1; i < max_y - 1; i++) {
+        mvwhline(win, i, 1, ' ', max_x - 2);
+    }
+
+    mvwprintw(win, 10, 2, "OS:       %s", sys_info->os);
+    mvwprintw(win, 3, 2, "Distro:   %s", sys_info->distro);
+    mvwprintw(win, 1, 2, "Host:     %s", sys_info->hostname);
+    mvwprintw(win, 5, 2, "WM:    %s", sys_info->vm_de);
+    mvwprintw(win, 4, 2, "Kernel:   %s", sys_info->kernel);
+    mvwprintw(win, 6, 2, "Shell:    %s", sys_info->shell);
+    mvwprintw(win, 7, 2, "CPU:      %.*s", max_x - 14, sys_info->cpu);
+    mvwprintw(win, 8, 2, "GPU:      %.*s", max_x - 14, sys_info->gpu);
+    double free_gib = sys_info->fs_total_gib - sys_info->fs_used_gib;
+    mvwprintw(win, 9, 2, "Disk: %.2f GiB Free (%.1f%% Used) [%s]", 
+              free_gib, sys_info->fs_perc, sys_info->fs_type);
+    mvwprintw(win, 2, 2, "Uptime:   %d d %d h %d m %ld s", 
+              sys_info->days, sys_info->hours, sys_info->minutes, sys_info->seconds);
+    
+    wrefresh(win);
 }
 
 void render_processes(WINDOW *win, const struct ProcessList *plist, int selected, int *scroll) {
@@ -141,7 +160,7 @@ int confirm_kill(int pid, const char *name) {
     return result;
 }
 
-void render_dashboard(const struct Memory *memory, const struct Uptime *uptime, const struct Swap *swap, const struct ProcessList *plist, int selected, int *scroll) {
+void render_dashboard(const struct Memory *memory, const struct SystemInfo *sys_info, const struct Swap *swap, const struct ProcessList *plist, int selected, int *scroll) {
     werase(stdscr);
 
     int main_h = LINES;
@@ -180,7 +199,7 @@ void render_dashboard(const struct Memory *memory, const struct Uptime *uptime, 
 
     WINDOW *win_sys = subwin(stdscr, sub_h, sub_w, 1, 2 + sub_w);
     draw_rounded_box(win_sys);
-    render_uptime(win_sys, uptime);
+    render_system_info(win_sys, sys_info);
 
     int bot_h = main_h - sub_h - 3;
     WINDOW *win_proc = subwin(stdscr, bot_h, main_w - 4, 1 + sub_h, 2);

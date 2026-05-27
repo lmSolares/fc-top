@@ -7,7 +7,7 @@ int main(){
 
     struct Memory memory;
     struct Swap swap;
-    struct Uptime uptime;
+    struct SystemInfo sys_info;
     struct ProcessList process_list = {NULL, 0, 0};
 
     int selected_process = 0;
@@ -19,7 +19,7 @@ int main(){
 
         // Get data
         get_memory(&memory, &swap);
-        get_uptime(&uptime);
+        get_system_info(&sys_info);
         get_processes(&process_list);
 
         if (process_list.count > 0 && selected_process >= process_list.count) {
@@ -29,7 +29,7 @@ int main(){
         }
 
         // Render dashboard
-        render_dashboard(&memory, &uptime, &swap, &process_list, selected_process, &scroll_offset);
+        render_dashboard(&memory, &sys_info, &swap, &process_list, selected_process, &scroll_offset);
 
         // Quit
         int in = getch();

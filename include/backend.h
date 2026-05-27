@@ -43,17 +43,32 @@ struct Hardware{
 
 
 /**
- * @struct Uptime
- * @brief Represents the total time since the last system startup.
- * This structure contains the information necessary to represent system time in days, hours, minutes, and seconds.
- *
+ * @struct SystemInfo
+ * @brief Representa la información general del sistema 
  */
-struct Uptime{
+struct SystemInfo {
     long seconds;
     int minutes;
     int hours;
     int days;
+    char os[32];
+    char hostname[64];
+    char kernel[64];
+    char shell[32];
+    char cpu[128];
+    char gpu[128];
+    char distro[64];
+    char vm_de[64];
+    char fs_type[32];
+    double fs_total_gib;
+    double fs_used_gib;
+    double fs_perc;
 };
+
+/**
+ * @brief Función que obtiene la información del sistema operativo, entorno y tiempo de actividad.
+ */
+void get_system_info(struct SystemInfo *sys_info);
 
 /**
  * @struct Process
@@ -83,23 +98,9 @@ struct ProcessList{
  * @return void
  */
 void get_memory(struct Memory *memory, struct Swap *swap);
-
-/**
- * @brief Function that reads /proc/uptime to obtain the current system time status.}
- * @param uptime Uptime structure in which the data will be stored.
- *
- * @return void
- */
-void get_uptime(struct Uptime *uptime);
-
-/**
- *
- */
+void get_system_info(struct SystemInfo *sys_info);
 void get_processes(struct ProcessList *plist);
-
-/**
- *
- */
 void free_processes(struct ProcessList *plist);
+
 
 #endif
