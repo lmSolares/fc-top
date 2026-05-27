@@ -71,7 +71,7 @@ void render_system_info(WINDOW *win, const struct SystemInfo *sys_info) {
     for (int i = 1; i < max_y - 1; i++) {
         mvwhline(win, i, 1, ' ', max_x - 2);
     }
-
+    // Display system info
     mvwprintw(win, 10, 2, "OS:       %s", sys_info->os);
     mvwprintw(win, 3, 2, "Distro:   %s", sys_info->distro);
     mvwprintw(win, 1, 2, "Host:     %s", sys_info->hostname);

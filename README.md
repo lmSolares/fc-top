@@ -13,6 +13,20 @@ A resource monitor for Linux written in C.
 
 * **Interactive Interface:** Allows browsing the process list and terminating processes directly from the panel.
 
+* **CPU:** Displays the model of CPU.
+
+* **GPU:** Displays the model of GPU.
+
+* **Distro**
+
+* **Kernel**
+
+* **Disk**
+
+* **SO**
+
+* **Host**
+
 ## Prerequisites
 * Linux operating system with access to the `/proc` directory and files.
 

@@ -60,6 +60,7 @@ void get_memory(struct Memory *memory, struct Swap *swap){
     TotalGiB = (double) MemTotal / 1048576.0;
     UsedGiB = (double) MemUsed /  1048576.0;
 
+    // Asignar a la estructura
     memory->MemTotal = MemTotal;
     memory->MemAvailable = MemAvailable;
     memory->UsagePercentage = UsagePercentage;
