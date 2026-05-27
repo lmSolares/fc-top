@@ -1,6 +1,10 @@
 #include "backend.h"
 #include <stdio.h>
 #include <string.h>
+#include <dirent.h>
+#include <ctype.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 /*
 * fc-top status.c
@@ -105,4 +109,78 @@ void get_uptime(struct Uptime *uptime){
     uptime->hours   = (second / 3600) % 24;
     uptime->minutes = (second / 60) % 60;
     uptime->seconds = second % 60;
+}
+
+void get_processes(struct ProcessList *plist) {
+
+    DIR *dir = opendir("/proc");
+    if (dir == NULL) {
+        return;
+    }
+
+    plist->count = 0;
+
+    struct dirent *entry;
+    while ((entry = readdir(dir)) != NULL) {
+
+        if (!isdigit(entry->d_name[0])) {
+            continue;
+        }
+
+        if (plist->count >= plist->capacity) {
+            plist->capacity = (plist->capacity == 0) ? 256 : plist->capacity * 2;
+            plist->processes = realloc(plist->processes, plist->capacity * sizeof(struct Process));
+        }
+
+        int pid = atoi(entry->d_name);
+        struct Process *p = &plist->processes[plist->count];
+        p->pid = pid;
+
+        char path[256];
+        snprintf(path, sizeof(path), "/proc/%d/stat", pid);
+        FILE *f = fopen(path, "r");
+
+        if (f) {
+            char line[1024];
+            if (fgets(line, sizeof(line), f)) {
+                char *start = strchr(line, '(');
+                char *end = strrchr(line, ')');
+
+                if (start && end && end > start) {
+                    int name_len = end - start - 1;
+                    if (name_len >= sizeof(p->name)) name_len = sizeof(p->name) - 1;
+                    strncpy(p->name, start + 1, name_len);
+                    p->name[name_len] = '\0';
+
+                    sscanf(end + 2, "%c", &p->state);
+
+                    char *num_ptr = end + 4;
+                    int offset;
+
+                    for (int i = 0; i < 21; i++) {
+                        if (sscanf(num_ptr, "%ld%n", &p->rss, &offset) != 1) {
+                            break;
+                        }
+                        num_ptr += offset;
+                    }
+                    p->rss = p->rss * sysconf(_SC_PAGESIZE);
+
+                }
+            }
+            fclose(f);
+        }
+
+        plist->count++;
+    }
+
+    closedir(dir);
+}
+
+void free_processes(struct ProcessList *plist) {
+    if (plist->processes != NULL) {
+        free(plist->processes);
+        plist->processes = NULL;
+    }
+    plist->capacity = 0;
+    plist->count = 0;
 }
